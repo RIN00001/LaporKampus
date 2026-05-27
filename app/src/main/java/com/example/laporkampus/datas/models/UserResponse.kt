@@ -1,5 +1,7 @@
 package com.example.laporkampus.datas.models
 
 data class UserResponse (
-    val data: UserModel
+    val message: String,
+    val token: String?,
+    val user: UserModel
 )

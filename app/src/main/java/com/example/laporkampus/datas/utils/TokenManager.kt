@@ -1,6 +1,5 @@
 package com.example.laporkampus.datas.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 
