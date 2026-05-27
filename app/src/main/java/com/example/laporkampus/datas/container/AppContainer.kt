@@ -1,53 +1,52 @@
 package com.example.laporkampus.datas.container
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import com.example.laporkampus.dataStore
+import com.example.laporkampus.datas.interceptors.TokenInterceptor
 import com.example.laporkampus.datas.repositories.AuthenticationRepository
+import com.example.laporkampus.datas.repositories.AuthenticationRepositoryInterface
+import com.example.laporkampus.datas.repositories.UserRepository
+import com.example.laporkampus.datas.repositories.UserRepositoryInterface
 import com.example.laporkampus.datas.services.AuthenticationService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+interface AppContainerInterface {
+    val authRepository: AuthenticationRepositoryInterface
+    val userRepository: UserRepositoryInterface
+}
+
 class AppContainer(
-    private val dataStore: DataStore<Preferences>
-) {
-    // 1. Setup logging to watch JSON bodies drop in your logcat console
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+    private val context: Context,
+): AppContainerInterface {
+    companion object {
+        private const val BASE_URL = "http://10.0.2.2:3000/"
     }
 
-    // 2. Build the client with global header requirements
+    override val userRepository: UserRepositoryInterface by lazy {
+        UserRepository(dataStore = context.dataStore)
+    }
+
     private val okHttpClient: OkHttpClient by lazy {
-        OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Accept", "application/json")
-                    .build()
-                chain.proceed(request)
-            }
-            .addInterceptor(loggingInterceptor)
-            .build()
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val tokenInterceptor = TokenInterceptor(userRepository)
+
+        OkHttpClient.Builder().addInterceptor(logging).addInterceptor(tokenInterceptor).build()
     }
 
-    // 3. Initialize the global Network Engine
     private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("http://192.168.4.99:3000/") // Ensure your local API server ip matches!
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).client(okHttpClient).build()
     }
 
-    // 4. Create the API instance from your Service interface
-    private val authApi: AuthenticationService by lazy {
-        retrofit.create(AuthenticationService::class.java)
-    }
+    //Services
+    private val authApi: AuthenticationService by lazy {retrofit.create(AuthenticationService::class.java) }
 
-    // 5. Expose the Single Source of Truth Repository with network & local storage attached
-//    val authenticationRepository: AuthenticationRepository by lazy {
-//        AuthenticationRepository(authService = authApi, dataStore = dataStore)
-//    }
+    // Repositories
+    override val authRepository: AuthenticationRepository by lazy {
+        AuthenticationRepository(authApi)
+    }
 }

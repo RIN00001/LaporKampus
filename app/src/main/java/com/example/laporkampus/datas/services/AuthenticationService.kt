@@ -1,20 +1,14 @@
 package com.example.laporkampus.datas.services
-import com.example.laporkampus.datas.models.LoginRequest
-import com.example.laporkampus.datas.models.LoginResponse
-import com.example.laporkampus.datas.models.RegisterRequest
-import com.example.laporkampus.datas.models.RegisterResponse
+import com.example.laporkampus.datas.models.UserResponse
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.POST
 import retrofit2.http.Body
 
 interface AuthenticationService {
-    @POST("auth/login")
-    suspend fun login(
-        @Body request: LoginRequest
-    ): Response<LoginResponse>
+    @POST("api/register")
+    fun register(@Body registerMap: HashMap<String, String>): Call<UserResponse>
 
-    @POST("auth/register")
-    suspend fun register(
-        @Body request: RegisterRequest
-    ): Response<RegisterResponse>
+    @POST("api/login")
+    fun login(@Body loginMap: HashMap<String, String>): Call<UserResponse>
 }

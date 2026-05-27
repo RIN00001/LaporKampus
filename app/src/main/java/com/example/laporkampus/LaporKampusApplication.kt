@@ -6,16 +6,16 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.laporkampus.datas.container.AppContainer
+import com.example.laporkampus.datas.utils.TokenManager
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-    name = "user_data"
-)
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
 
 class LaporKampusApplication: Application() {
     lateinit var container: AppContainer
 
     override fun onCreate() {
         super.onCreate()
-        container = AppContainer(dataStore)
+        TokenManager.init(this)
+        container = AppContainer(this)
     }
 }
