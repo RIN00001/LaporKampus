@@ -1,6 +1,5 @@
-package com.example.todolistapp.views
+package com.example.laporkampus.screens.views
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.laporkampus.datas.enums.PagesEnum
 import com.example.laporkampus.screens.uistates.AuthenticationUiStatus
-import com.example.laporkampus.screens.viewsmodels.AuthenticationViewModel
+import com.example.laporkampus.screens.viewmodels.AuthenticationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

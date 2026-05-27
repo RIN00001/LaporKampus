@@ -4,10 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,16 +19,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.laporkampus.datas.models.UserModel
+import com.example.laporkampus.datas.models.UserModel // Import model user
 import com.example.laporkampus.screens.viewmodels.ReportUserViewModel
 import com.example.laporkampus.screens.views.components.ReportCard
 
 @Composable
-fun UserDashboardScreen(
-    user: UserModel?,
-    onLogout: () -> Unit,
-    onNavigateToReports: () -> Unit,
-    onNavigateToCreateReport: () -> Unit,
+fun ReportListScreen(
+    user: UserModel?, // Tambahkan parameter user di sini
+    onReportClick: (Int) -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: ReportUserViewModel = viewModel(factory = ReportUserViewModel.Factory),
     modifier: Modifier = Modifier
 ) {
@@ -43,29 +40,29 @@ fun UserDashboardScreen(
 
     Box(modifier = modifier.fillMaxSize().background(Color.White)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Header Gradasi Orange
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Brush.verticalGradient(colors = listOf(Color(0xFFFF6D00), Color(0xFFFF9100))))
-                    .padding(horizontal = 20.dp, vertical = 24.dp)
+                    .padding(horizontal = 16.dp, vertical = 24.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
                     Column {
-                        Text(text = "Welcome,", color = Color.White, fontSize = 14.sp)
+                        // FIX: Mengubah teks statis menjadi dinamis seperti Dashboard
+                        Text(text = "Your Report,", color = Color.White, fontSize = 14.sp)
                         Text(
                             text = "${user?.name ?: "Mahasiswa"}!",
                             color = Color.White,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
-                    }
-                    IconButton(onClick = onNavigateToReports) {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = "Laporanku", tint = Color.White)
                     }
                 }
             }
@@ -77,26 +74,14 @@ fun UserDashboardScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-                    contentPadding = PaddingValues(top = 16.dp, bottom = 80.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(reports) { report ->
-                        ReportCard(report = report, onClick = { onNavigateToReports() })
+                        ReportCard(report = report, onClick = { onReportClick(report.id) })
                     }
                 }
             }
-        }
-
-        FloatingActionButton(
-            onClick = onNavigateToCreateReport,
-            shape = CircleShape,
-            containerColor = Color(0xFFFF9800),
-            contentColor = Color.White,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 20.dp, bottom = 20.dp)
-        ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Tambah Laporan", modifier = Modifier.size(28.dp))
         }
     }
 }

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.laporkampus.screens.routes.AppNavigation
 import com.example.laporkampus.ui.theme.LaporKampusTheme
-import com.example.todolistapp.views.LoginView
+import com.example.laporkampus.MainActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

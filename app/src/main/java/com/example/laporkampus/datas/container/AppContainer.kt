@@ -7,10 +7,12 @@ import com.example.laporkampus.datas.repositories.AuthenticationRepository
 import com.example.laporkampus.datas.repositories.AuthenticationRepositoryInterface
 import com.example.laporkampus.datas.repositories.ReportStaffRepository
 import com.example.laporkampus.datas.repositories.ReportStaffRepositoryInterface
+import com.example.laporkampus.datas.repositories.ReportUserRepository // Tambahan
 import com.example.laporkampus.datas.repositories.UserRepository
 import com.example.laporkampus.datas.repositories.UserRepositoryInterface
 import com.example.laporkampus.datas.services.AuthenticationService
 import com.example.laporkampus.datas.services.ReportStaffService
+import com.example.laporkampus.datas.services.ReportUserService // Tambahan
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,6 +22,7 @@ interface AppContainerInterface {
     val authRepository: AuthenticationRepositoryInterface
     val userRepository: UserRepositoryInterface
     val reportStaffRepository: ReportStaffRepositoryInterface
+    val reportUserRepository: ReportUserRepository // Tambahan: Daftarkan ke Interface
 }
 
 class AppContainer(
@@ -46,10 +49,10 @@ class AppContainer(
         Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).client(okHttpClient).build()
     }
 
-    //Services
+    // Services
     private val authApi: AuthenticationService by lazy { retrofit.create(AuthenticationService::class.java) }
-
     private val reportStaffApi: ReportStaffService by lazy { retrofit.create(ReportStaffService::class.java) }
+    private val reportUserApi: ReportUserService by lazy { retrofit.create(ReportUserService::class.java) } // Tambahan: Create API Service
 
     // Repositories
     override val authRepository: AuthenticationRepository by lazy {
@@ -58,5 +61,10 @@ class AppContainer(
 
     override val reportStaffRepository: ReportStaffRepository by lazy {
         ReportStaffRepository(reportStaffApi)
+    }
+
+    // Tambahan: Sediakan instansiasi ReportUserRepository ke dalam Container
+    override val reportUserRepository: ReportUserRepository by lazy {
+        ReportUserRepository(reportUserService = reportUserApi)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.laporkampus.screens.viewsmodels
+package com.example.laporkampus.screens.viewmodels
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf

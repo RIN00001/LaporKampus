@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -31,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.laporkampus.datas.enums.PagesEnum
 import com.example.laporkampus.screens.uistates.AuthenticationUiStatus
-import com.example.laporkampus.screens.viewsmodels.AuthenticationViewModel
+import com.example.laporkampus.screens.viewmodels.AuthenticationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
