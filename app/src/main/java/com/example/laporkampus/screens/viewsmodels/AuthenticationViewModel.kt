@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.laporkampus.LaporKampusApplication
-import com.example.laporkampus.datas.models.ErrorResponseModel
+import com.example.laporkampus.datas.models.GeneralResponseModel
 import com.example.laporkampus.datas.models.UserResponse
 import com.example.laporkampus.datas.repositories.AuthenticationRepositoryInterface
 import com.example.laporkampus.datas.repositories.UserRepositoryInterface
@@ -18,8 +18,6 @@ import com.example.laporkampus.screens.uistates.AuthenticationUiState
 import com.example.laporkampus.screens.uistates.AuthenticationUiStatus
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -34,7 +32,6 @@ class AuthenticationViewModel(
         private set
 
     private val _authUiState = MutableStateFlow(AuthenticationUiState())
-    val authUiState: StateFlow<AuthenticationUiState> = _authUiState.asStateFlow()
 
     var usernameInput by mutableStateOf("")
         private set
@@ -116,7 +113,7 @@ class AuthenticationViewModel(
                     val token = body?.token
 
                     if (token!= null && user != null) {
-                        saveUserSession(token, user.name ?: "User")
+                        saveUserSession(token, user.name)
                         authenticationUiStatus = AuthenticationUiStatus.Success(body)
                         Log.d("Login", "Account accessed: $token")
                     } else {
@@ -178,7 +175,7 @@ class AuthenticationViewModel(
     private fun parseErrorMessage(errorBody: String?): String {
         return try {
             if (errorBody == null) return "Unknown Error"
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponseModel::class.java)
+            val errorResponse = Gson().fromJson(errorBody, GeneralResponseModel::class.java)
             errorResponse.message
         } catch (e: Exception) {
             "Gagal memproses error server"

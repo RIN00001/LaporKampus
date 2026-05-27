@@ -5,9 +5,12 @@ import com.example.laporkampus.dataStore
 import com.example.laporkampus.datas.interceptors.TokenInterceptor
 import com.example.laporkampus.datas.repositories.AuthenticationRepository
 import com.example.laporkampus.datas.repositories.AuthenticationRepositoryInterface
+import com.example.laporkampus.datas.repositories.ReportStaffRepository
+import com.example.laporkampus.datas.repositories.ReportStaffRepositoryInterface
 import com.example.laporkampus.datas.repositories.UserRepository
 import com.example.laporkampus.datas.repositories.UserRepositoryInterface
 import com.example.laporkampus.datas.services.AuthenticationService
+import com.example.laporkampus.datas.services.ReportStaffService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -16,6 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 interface AppContainerInterface {
     val authRepository: AuthenticationRepositoryInterface
     val userRepository: UserRepositoryInterface
+    val reportStaffRepository: ReportStaffRepositoryInterface
 }
 
 class AppContainer(
@@ -43,10 +47,16 @@ class AppContainer(
     }
 
     //Services
-    private val authApi: AuthenticationService by lazy {retrofit.create(AuthenticationService::class.java) }
+    private val authApi: AuthenticationService by lazy { retrofit.create(AuthenticationService::class.java) }
+
+    private val reportStaffApi: ReportStaffService by lazy { retrofit.create(ReportStaffService::class.java) }
 
     // Repositories
     override val authRepository: AuthenticationRepository by lazy {
         AuthenticationRepository(authApi)
+    }
+
+    override val reportStaffRepository: ReportStaffRepository by lazy {
+        ReportStaffRepository(reportStaffApi)
     }
 }

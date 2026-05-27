@@ -12,4 +12,5 @@ enum class PagesEnum {
     // For each view of Staff route, put here
     StaffGraph,
     AdminDashboard,
+    StaffReportDetail,
 }
