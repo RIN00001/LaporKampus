@@ -9,10 +9,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -29,13 +31,15 @@ import com.example.laporkampus.screens.views.components.ReportCard
 fun UserDashboardScreen(
     user: UserModel?,
     onLogout: () -> Unit,
-    onNavigateToReports: () -> Unit,
+    onNavigateToMyReports: () -> Unit,
+    onNavigateToDetail: (Int) -> Unit,
     onNavigateToCreateReport: () -> Unit,
     viewModel: ReportUserViewModel = viewModel(factory = ReportUserViewModel.Factory),
     modifier: Modifier = Modifier
 ) {
     val reports by viewModel.reports.observeAsState(initial = emptyList())
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
+    var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.getReportsUser()
@@ -64,8 +68,46 @@ fun UserDashboardScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    IconButton(onClick = onNavigateToReports) {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = "Laporanku", tint = Color.White)
+                    Box {
+                        IconButton(
+                            onClick = {
+                                expanded = true
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu",
+                                tint = Color.White
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = {
+                                expanded = false
+                            }
+                        ) {
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text("My Reports")
+                                },
+                                onClick = {
+                                    expanded = false
+                                    onNavigateToMyReports()
+                                }
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text("Logout")
+                                },
+                                onClick = {
+                                    expanded = false
+                                    onLogout()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -81,7 +123,7 @@ fun UserDashboardScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(reports) { report ->
-                        ReportCard(report = report, onClick = { onNavigateToReports() })
+                        ReportCard(report = report, onClick = { onNavigateToDetail(report.id) })
                     }
                 }
             }

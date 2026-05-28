@@ -44,7 +44,7 @@ fun ReportListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Brush.verticalGradient(colors = listOf(Color(0xFFFF6D00), Color(0xFFFF9100))))
-                    .padding(horizontal = 16.dp, vertical = 24.dp)
+                    .padding(horizontal = 20.dp, vertical = 24.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 12.dp),

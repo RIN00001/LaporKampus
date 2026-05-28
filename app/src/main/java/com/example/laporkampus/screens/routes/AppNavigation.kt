@@ -1,11 +1,7 @@
 package com.example.laporkampus.screens.routes
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -76,14 +72,17 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 if (userData != null) {
                     UserDashboardScreen(
                         user = userData,
+                        onNavigateToMyReports = {
+                            navController.navigate(PagesEnum.ReportList.name)
+                        },
+                        onNavigateToDetail = { reportId ->
+                            navController.navigate("${PagesEnum.ReportDetail.name}/$reportId")
+                        },
                         onLogout = {
                             authViewModel.resetViewModel()
                             navController.navigate(PagesEnum.AuthGraph.name) {
                                 popUpTo(0) { inclusive = true }
                             }
-                        },
-                        onNavigateToReports = {
-                            navController.navigate(PagesEnum.ReportList.name)
                         },
                         onNavigateToCreateReport = {
                             navController.navigate(PagesEnum.CreateReport.name)

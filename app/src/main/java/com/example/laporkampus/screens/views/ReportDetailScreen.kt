@@ -16,6 +16,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -84,36 +85,35 @@ fun ReportDetailScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            listOf(currentReport.location, currentReport.floor, currentReport.room).forEach { tag ->
-                                if (tag.isNotEmpty()) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(Color(0xFFFF6F00))
-                                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                                    ) {
-                                        Text(text = tag, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                    }
+                        listOf(currentReport.location, currentReport.floor, currentReport.room)
+                            .filter { it.isNotEmpty() }
+                            .forEach { tag ->
+
+                                Box(
+                                    modifier = Modifier
+                                        .shadow(
+                                            elevation = 8.dp,
+                                            shape = RoundedCornerShape(12.dp),
+                                            ambientColor = Color.Black,
+                                            spotColor = Color.Black
+                                        )
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color(0xFFE65100))
+                                        .padding(horizontal = 15.dp, vertical = 12.dp)
+                                ) {
+                                    Text(
+                                        text = tag,
+                                        color = Color.White,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color(0xFFFF9800))
-                                .padding(horizontal = 14.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(text = currentReport.upvoteCount.toString(), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                            Icon(imageVector = Icons.Default.ArrowUpward, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -129,13 +129,49 @@ fun ReportDetailScreen(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
+
+                    Text(
+                        text = "ID Laporan: ${currentReport.id}",
+                        fontSize = 16.sp,
+                        color = Color.DarkGray,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
                         text = currentReport.description,
-                        fontSize = 14.sp,
-                        color = Color.DarkGray,
+                        fontSize = 16.sp,
+                        color = Color.Black,
                         textAlign = TextAlign.Justify,
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color(0xFFFF9800))
+                                .padding(horizontal = 14.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = currentReport.upvoteCount.toString(),
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.ArrowUpward,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp), color = Color.LightGray)
 
@@ -167,7 +203,7 @@ fun ReportDetailScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xFFF5F5F5))
+                                .background(Color(0xFFE1E1E1))
                                 .padding(14.dp)
                         ) {
                             // Cuma Note yang perlu Elvis karena di data class menggunakan String?
