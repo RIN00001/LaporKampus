@@ -125,7 +125,16 @@ class ReportStaffViewModel(private val repository: ReportStaffRepository) : View
                     _actionSuccessMessage.value =
                         response.body()?.message ?: "Laporan berhasil divalidasi!"
                 } else {
-                    _errorMessage.value = "Gagal memvalidasi laporan: ${response.message()}"
+                    val errorBody = response.errorBody()?.string()
+
+                    val errorMessage = try {
+                        org.json.JSONObject(errorBody ?: "")
+                            .getString("message")
+                    } catch (e: Exception) {
+                        response.message()
+                    }
+
+                    _errorMessage.value = "Gagal memvalidasi laporan: $errorMessage"
                 }
             }
 
@@ -146,7 +155,7 @@ class ReportStaffViewModel(private val repository: ReportStaffRepository) : View
             initializer {
                 val application = (this[APPLICATION_KEY] as LaporKampusApplication)
                 ReportStaffViewModel(
-                    repository = application.container.reportStaffRepository as ReportStaffRepository
+                    repository = application.container.reportStaffRepository
                 )
             }
         }
