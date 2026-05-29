@@ -34,6 +34,9 @@ fun UserDashboardScreen(
     onNavigateToMyReports: () -> Unit,
     onNavigateToDetail: (Int) -> Unit,
     onNavigateToCreateReport: () -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToLearningMaterials: () -> Unit,
+    onNavigateToSavedMaterials: () -> Unit,
     viewModel: ReportUserViewModel = viewModel(factory = ReportUserViewModel.Factory),
     modifier: Modifier = Modifier
 ) {
@@ -95,6 +98,36 @@ fun UserDashboardScreen(
                                 onClick = {
                                     expanded = false
                                     onNavigateToMyReports()
+                                }
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text("Profile")
+                                },
+                                onClick = {
+                                    expanded = false
+                                    onNavigateToProfile()
+                                }
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text("Learning Materials")
+                                },
+                                onClick = {
+                                    expanded = false
+                                    onNavigateToLearningMaterials()
+                                }
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text("Saved Materials")
+                                },
+                                onClick = {
+                                    expanded = false
+                                    onNavigateToSavedMaterials()
                                 }
                             )
 

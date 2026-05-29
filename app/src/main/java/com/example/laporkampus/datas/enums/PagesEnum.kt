@@ -8,6 +8,10 @@ enum class PagesEnum {
     // For each view of Mahasiswa route, put here
     MahasiswaGraph,
     UserDashboard,
+    Profile,
+    EditProfile,
+    LearningMaterials,
+    SavedMaterials,
     ReportList,
     ReportDetail,
     CreateReport,
@@ -15,6 +19,7 @@ enum class PagesEnum {
     // For each view of Staff route, put here
     StaffGraph,
     AdminDashboard,
+    StaffDashboard,
     StaffReportDetail,
 
 }
