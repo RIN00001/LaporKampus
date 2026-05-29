@@ -2,6 +2,7 @@ package com.example.laporkampus.screens.views
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -18,16 +19,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.laporkampus.R
 import com.example.laporkampus.datas.enums.PagesEnum
 import com.example.laporkampus.screens.uistates.AuthenticationUiStatus
 import com.example.laporkampus.screens.viewmodels.AuthenticationViewModel
@@ -43,13 +46,11 @@ fun RegisterView(
     val focusManager = LocalFocusManager.current
     val status = authenticationViewModel.authenticationUiStatus
 
-    // Local form states
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // Unified Submission Validation
     val isFormValid = username.isNotBlank() && email.isNotBlank() && password.length >= 8
 
     LaunchedEffect(status) {
@@ -59,169 +60,205 @@ fun RegisterView(
                 authenticationViewModel.clearErrorMessage()
             }
             is AuthenticationUiStatus.Success -> {
-                Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
             }
             else -> {}
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Create new account", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = modifier
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.bg_auth),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp)
-                .verticalScroll(rememberScrollState()), // Prevents keyboard layout overlap clipping
+                .background(Color(0xCCFF8A00))
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Form Fields Container
+
+            // Inner content aligned exactly with LoginView
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp)
+                    .padding(top = 100.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Username field
-                Text(text = "Username", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.Black, modifier = Modifier.padding(bottom = 8.dp))
+                Text(
+                    text = "Register",
+                    color = Color.White,
+                    fontSize = 42.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "Selamat Datang di LaporKampus",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(modifier = Modifier.height(36.dp))
+
+                // USERNAME FIELD
                 OutlinedTextField(
                     value = username,
                     onValueChange = {
                         username = it
                         authenticationViewModel.changeUsernameInput(it)
                     },
-                    placeholder = { Text("Enter your username", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    placeholder = { Text("Username", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF9B8FC7),
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
+                        focusedContainerColor = Color(0xFFE8E2D8),
+                        unfocusedContainerColor = Color(0xFFE8E2D8),
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                    singleLine = true
+                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Email field
-                Text(text = "Email Address", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.Black, modifier = Modifier.padding(bottom = 8.dp))
+                // EMAIL FIELD
                 OutlinedTextField(
                     value = email,
                     onValueChange = {
                         email = it
                         authenticationViewModel.changeEmailInput(it)
                     },
-                    placeholder = { Text("example@student.uc.ac.id", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    placeholder = { Text("Email", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF9B8FC7),
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
+                        focusedContainerColor = Color(0xFFE8E2D8),
+                        unfocusedContainerColor = Color(0xFFE8E2D8),
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                    singleLine = true
+                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Password field
-                Text(text = "Password", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.Black, modifier = Modifier.padding(bottom = 8.dp))
+                // PASSWORD FIELD
                 OutlinedTextField(
                     value = password,
                     onValueChange = {
                         password = it
                         authenticationViewModel.changePasswordInput(it)
                     },
-                    placeholder = { Text("Minimum 8 characters", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF9B8FC7),
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black
-                    ),
+                    placeholder = { Text("Password", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    singleLine = true,
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { passwordVisible = !passwordVisible }) {
                             Icon(
                                 imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = "Toggle visibility"
+                                contentDescription = null
                             )
                         }
                     },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFE8E2D8),
+                        unfocusedContainerColor = Color(0xFFE8E2D8),
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         if (isFormValid && status !is AuthenticationUiStatus.Loading) {
                             authenticationViewModel.register()
                         }
-                    }),
-                    singleLine = true
+                    })
                 )
-            }
 
-            // Action Buttons and Terms Layout Container
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // REGISTER BUTTON
                 Button(
                     onClick = { authenticationViewModel.register() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(28.dp),
+                        .height(62.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF9B8FC7),
-                        disabledContainerColor = Color(0xFF9B8FC7).copy(alpha = 0.5f)
+                        containerColor = Color(0xFF121212),
+                        contentColor = Color.White,
+                        disabledContainerColor = Color(0xFF121212), // Solid background when disabled
+                        disabledContentColor = Color.White           // Solid text when disabled
                     ),
                     enabled = isFormValid && status !is AuthenticationUiStatus.Loading
                 ) {
                     if (status is AuthenticationUiStatus.Loading) {
-                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(22.dp))
                     } else {
                         Text(
-                            text = "Register An Account",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            text = "Register Now",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(24.dp))
+            // BOTTOM NAVIGATION TEXT
+            Row(
+                modifier = Modifier
+                    .padding(top = 60.dp, bottom = 32.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Sudah Punya Akun? ",
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
 
                 TextButton(
                     onClick = {
                         authenticationViewModel.resetViewModel()
                         navController.navigate(PagesEnum.Login.name)
                     },
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = Color.Gray
-                    )
+                    contentPadding = PaddingValues(0.dp)
                 ) {
                     Text(
-                        text = "Already have an account? Login here.",
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Normal
+                        text = "Login",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
                     )
                 }
             }

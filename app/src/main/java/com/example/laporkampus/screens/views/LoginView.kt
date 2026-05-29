@@ -1,5 +1,6 @@
 package com.example.laporkampus.screens.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,16 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.laporkampus.R
 import com.example.laporkampus.datas.enums.PagesEnum
 import com.example.laporkampus.screens.uistates.AuthenticationUiStatus
 import com.example.laporkampus.screens.viewmodels.AuthenticationViewModel
@@ -44,211 +47,192 @@ fun LoginView(
 
     LaunchedEffect(status) {
         when (status) {
-            is AuthenticationUiStatus.Error -> {
-                showError = true
-            }
-            is AuthenticationUiStatus.Success -> {
-                showError = false
-            }
-            else -> {
-                showError = false
-            }
+            is AuthenticationUiStatus.Error -> { showError = true }
+            is AuthenticationUiStatus.Success -> { showError = false }
+            else -> { showError = false }
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Log into account",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
-                )
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = modifier
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.bg_auth),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp)
-                .padding(top = 32.dp),
+                .background(Color(0xCCFF8A00))
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+            // Inner content aligned exactly with RegisterView
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 100.dp), // Unified top alignment baseline
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Email field
                 Text(
-                    text = "Email",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    text = "Log In",
+                    color = Color.White,
+                    fontSize = 42.sp,
+                    fontWeight = FontWeight.Bold
                 )
 
+                Text(
+                    text = "Kabari & Tingkatkan Kenyamanan Anda",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                // USERNAME / EMAIL FIELD
                 OutlinedTextField(
-                    value = authenticationViewModel.emailInput, // 👈 READ DIRECTLY FROM VIEWMODEL
+                    value = authenticationViewModel.emailInput,
                     onValueChange = {
-                        authenticationViewModel.changeLoginEmail(it) // 👈 WRITE SAFELY VIA PUBLIC METHOD
+                        authenticationViewModel.changeLoginEmail(it)
                         authenticationViewModel.clearErrorMessage()
                         showError = false
                     },
-                    placeholder = { Text("example@example", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF9B8FC7),
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        errorBorderColor = Color(0xFFFF0000)
-                    ),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                    ),
+                    placeholder = { Text("Username", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    shape = RoundedCornerShape(16.dp),
                     singleLine = true,
-                    isError = showError
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFE8E2D8),
+                        unfocusedContainerColor = Color(0xFFE8E2D8),
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // Password field
-                Text(
-                    text = "Password",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
+                // PASSWORD FIELD
                 OutlinedTextField(
-                    value = authenticationViewModel.passwordInput, // 👈 READ DIRECTLY FROM VIEWMODEL
+                    value = authenticationViewModel.passwordInput,
                     onValueChange = {
-                        authenticationViewModel.changeLoginPassword(it) // 👈 WRITE SAFELY VIA PUBLIC METHOD
+                        authenticationViewModel.changeLoginPassword(it)
                         authenticationViewModel.clearErrorMessage()
                         showError = false
                     },
-                    placeholder = { Text("Enter password", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF9B8FC7),
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        errorBorderColor = Color(0xFFFF0000)
-                    ),
+                    placeholder = { Text("Password", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    singleLine = true,
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { passwordVisible = !passwordVisible }) {
                             Icon(
-                                imageVector = if (passwordVisible)
-                                    Icons.Default.Visibility
-                                else
-                                    Icons.Default.VisibilityOff,
-                                contentDescription = "Toggle password visibility"
+                                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = null
                             )
                         }
                     },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFFE8E2D8),
+                        unfocusedContainerColor = Color(0xFFE8E2D8),
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
                     ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            if (authenticationViewModel.emailInput.isNotBlank() && authenticationViewModel.passwordInput.isNotBlank()) {
-                                authenticationViewModel.login()
-                            }
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        if (status !is AuthenticationUiStatus.Loading) {
+                            authenticationViewModel.login()
                         }
-                    ),
-                    singleLine = true,
-                    isError = showError
+                    })
                 )
 
-                // Error message
                 if (showError) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Error,
-                            contentDescription = "Error",
-                            tint = Color(0xFFFF0000),
+                            contentDescription = null,
+                            tint = Color.Red,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = (status as? AuthenticationUiStatus.Error)?.message ?: "Unknown Error",
-                            fontSize = 12.sp,
-                            color = Color(0xFFFF0000)
+                            color = Color.Red,
+                            fontSize = 12.sp
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                // Log in button
+                // LOGIN BUTTON
                 Button(
                     onClick = { authenticationViewModel.login() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF9B8FC7),
-                        disabledContainerColor = Color(0xFF9B8FC7).copy(alpha = 0.5f)
-                    ),
-                    enabled = authenticationViewModel.emailInput.isNotBlank() && authenticationViewModel.passwordInput.isNotBlank() && status !is AuthenticationUiStatus.Loading
+                        .height(62.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF121212)),
+                    enabled = status !is AuthenticationUiStatus.Loading
                 ) {
                     if (status is AuthenticationUiStatus.Loading) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(22.dp))
                     } else {
                         Text(
-                            text = "Log in",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            text = "Login Now",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Terms and Privacy Policy
-            TextButton(
-                onClick = {
-                    authenticationViewModel.resetViewModel()
-                    navController.navigate(PagesEnum.Register.name)
-                },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = Color.Gray
-                )
+            // BOTTOM TEXT NAVIGATION
+            Row(
+                modifier = Modifier.padding(bottom = 32.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Don't have an account? Register it here.",
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Normal
+                    text = "Belum Punya Akun? ",
+                    color = Color.White,
+                    fontSize = 16.sp
                 )
+                TextButton(
+                    onClick = {
+                        authenticationViewModel.resetViewModel()
+                        navController.navigate(PagesEnum.Register.name)
+                    },
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Text(
+                        text = "Register",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }
