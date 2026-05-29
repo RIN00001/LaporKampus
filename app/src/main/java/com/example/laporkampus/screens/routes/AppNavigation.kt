@@ -175,18 +175,6 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 )
             }
 
-            composable(route = PagesEnum.LearningMaterials.name) {
-                LearningMaterialsScreen(
-                    onNavigateToMaterialDetail = { /* keep reserved for future detail page */ }
-                )
-            }
-
-            composable(route = PagesEnum.SavedMaterials.name) {
-                SavedMaterialsScreen(
-                    onNavigateToMaterialDetail = { /* keep reserved for future detail page */ }
-                )
-            }
-
             // Report List Route
             composable(route = PagesEnum.ReportList.name) {
                 val reportViewModel: ReportUserViewModel = viewModel(factory = ReportUserViewModel.Factory)
