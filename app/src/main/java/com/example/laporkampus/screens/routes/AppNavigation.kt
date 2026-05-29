@@ -89,9 +89,48 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                         },
                         onNavigateToCreateReport = {
                             navController.navigate(PagesEnum.CreateReport.name)
+                        },
+                        onNavigateToProfile = {
+                            navController.navigate(PagesEnum.Profile.name)
+                        },
+                        onNavigateToLearningMaterials = {
+                            navController.navigate(PagesEnum.LearningMaterials.name)
+                        },
+                        onNavigateToSavedMaterials = {
+                            navController.navigate(PagesEnum.SavedMaterials.name)
                         }
                     )
                 }
+            }
+
+            composable(route = PagesEnum.Profile.name) {
+                ProfileScreen(
+                    onNavigateToEditProfile = {
+                        navController.navigate(PagesEnum.EditProfile.name)
+                    },
+                    onNavigateToLogin = {
+                        authViewModel.resetViewModel()
+                        navController.navigate(PagesEnum.AuthGraph.name) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    viewModel = viewModel(
+                        key = "profile_vm",
+                        factory = com.example.laporkampus.frontend.viewmodel.ProfileViewModelFactory(profileGateway)
+                    )
+                )
+            }
+
+            composable(route = PagesEnum.EditProfile.name) {
+                EditProfileScreen(
+                    currentName = userData?.name.orEmpty(),
+                    currentImageUrl = null,
+                    onNavigateBack = { navController.popBackStack() },
+                    viewModel = viewModel(
+                        key = "edit_profile_vm",
+                        factory = com.example.laporkampus.frontend.viewmodel.EditProfileViewModelFactory(profileGateway)
+                    )
+                )
             }
 
             // Report List Route
