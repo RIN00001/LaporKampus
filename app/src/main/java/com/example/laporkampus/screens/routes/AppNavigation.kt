@@ -13,13 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.laporkampus.datas.enums.PagesEnum
-import com.example.laporkampus.frontend.model.ui.UserProfileUiModel
-import com.example.laporkampus.frontend.model.ui.UserRole
-import com.example.laporkampus.frontend.view.EditProfileScreen
-import com.example.laporkampus.frontend.view.LearningMaterialsScreen
-import com.example.laporkampus.frontend.view.ProfileScreen
-import com.example.laporkampus.frontend.view.SavedMaterialsScreen
-import com.example.laporkampus.frontend.viewmodel.ProfileGateway
 import com.example.laporkampus.screens.uistates.AuthenticationUiStatus
 import com.example.laporkampus.screens.viewmodels.AuthenticationViewModel
 import com.example.laporkampus.screens.viewmodels.ReportUserViewModel
@@ -40,41 +33,6 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     val authViewModel: AuthenticationViewModel = viewModel(factory = AuthenticationViewModel.Factory)
     val status = authViewModel.authenticationUiStatus
     val userData = (status as? AuthenticationUiStatus.Success)?.userData?.user
-    val profileGateway = remember(status) {
-        object : ProfileGateway {
-            override suspend fun getProfile(): Result<UserProfileUiModel> {
-                val currentUser = (status as? AuthenticationUiStatus.Success)?.userData?.user
-                    ?: return Result.failure(IllegalStateException("No active user session"))
-                return Result.success(
-                    UserProfileUiModel(
-                        id = currentUser.id.toString(),
-                        name = currentUser.name,
-                        email = currentUser.email,
-                        role = if (currentUser.role == "STAFF") UserRole.STAFF else UserRole.STUDENT,
-                        profileImageUrl = null
-                    )
-                )
-            }
-
-            override suspend fun updateProfile(name: String, profileImageUrl: String?): Result<UserProfileUiModel> {
-                val currentUser = (status as? AuthenticationUiStatus.Success)?.userData?.user
-                    ?: return Result.failure(IllegalStateException("No active user session"))
-                return Result.success(
-                    UserProfileUiModel(
-                        id = currentUser.id.toString(),
-                        name = name,
-                        email = currentUser.email,
-                        role = if (currentUser.role == "STAFF") UserRole.STAFF else UserRole.STUDENT,
-                        profileImageUrl = profileImageUrl
-                    )
-                )
-            }
-
-            override suspend fun logout(): Result<Unit> {
-                return Result.success(Unit)
-            }
-        }
-    }
 
     LaunchedEffect(status) {
         if (status is AuthenticationUiStatus.Success) {
@@ -131,60 +89,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                         },
                         onNavigateToCreateReport = {
                             navController.navigate(PagesEnum.CreateReport.name)
-                        },
-                        onNavigateToProfile = {
-                            navController.navigate(PagesEnum.Profile.name)
-                        },
-                        onNavigateToLearningMaterials = {
-                            navController.navigate(PagesEnum.LearningMaterials.name)
-                        },
-                        onNavigateToSavedMaterials = {
-                            navController.navigate(PagesEnum.SavedMaterials.name)
                         }
                     )
                 }
-            }
-
-            composable(route = PagesEnum.Profile.name) {
-                ProfileScreen(
-                    onNavigateToEditProfile = {
-                        navController.navigate(PagesEnum.EditProfile.name)
-                    },
-                    onNavigateToLogin = {
-                        authViewModel.resetViewModel()
-                        navController.navigate(PagesEnum.AuthGraph.name) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    },
-                    viewModel = viewModel(
-                        key = "profile_vm",
-                        factory = com.example.laporkampus.frontend.viewmodel.ProfileViewModelFactory(profileGateway)
-                    )
-                )
-            }
-
-            composable(route = PagesEnum.EditProfile.name) {
-                EditProfileScreen(
-                    currentName = userData?.name.orEmpty(),
-                    currentImageUrl = null,
-                    onNavigateBack = { navController.popBackStack() },
-                    viewModel = viewModel(
-                        key = "edit_profile_vm",
-                        factory = com.example.laporkampus.frontend.viewmodel.EditProfileViewModelFactory(profileGateway)
-                    )
-                )
-            }
-
-            composable(route = PagesEnum.LearningMaterials.name) {
-                LearningMaterialsScreen(
-                    onNavigateToMaterialDetail = { /* keep reserved for future detail page */ }
-                )
-            }
-
-            composable(route = PagesEnum.SavedMaterials.name) {
-                SavedMaterialsScreen(
-                    onNavigateToMaterialDetail = { /* keep reserved for future detail page */ }
-                )
             }
 
             // Report List Route

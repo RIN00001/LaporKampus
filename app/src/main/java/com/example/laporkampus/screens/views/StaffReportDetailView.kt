@@ -7,16 +7,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,9 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.laporkampus.screens.viewmodels.ReportStaffViewModel
-import com.example.laporkampus.screens.views.components.CustomDropdownMenu
-import com.example.laporkampus.screens.views.components.CustomOutlinedTextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StaffReportDetailView(
     reportId: Int,
@@ -42,7 +42,6 @@ fun StaffReportDetailView(
 
     val statusOptions = listOf("IN_PROGRESS", "DONE", "REJECTED")
 
-    // Navigasi kembali setelah validasi berhasil
     LaunchedEffect(actionSuccessMessage) {
         if (actionSuccessMessage != null) {
             onValidateSuccess()
@@ -56,39 +55,35 @@ fun StaffReportDetailView(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFF6F6F9))
+            .background(Color.White)
     ) {
-        // Header Gradasi Orange (konsisten dengan layar lain)
+        // Top Bar matches image: Orange background, "Validasi Laporan" left, ArrowBack right
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color(0xFFFF6D00), Color(0xFFFF9100))
-                    )
-                )
-                .padding(horizontal = 12.dp, vertical = 20.dp)
+                .background(Color(0xFFFF8A00))
+                .padding(horizontal = 16.dp, vertical = 20.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onNavigateBack) {
+                Text(
+                    text = "Validasi Laporan",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(onClick = onNavigateBack, modifier = Modifier.size(24.dp)) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
                         tint = Color.White
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Detail Laporan",
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
             }
         }
 
@@ -124,18 +119,14 @@ fun StaffReportDetailView(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .padding(horizontal = 20.dp, vertical = 24.dp)
                     ) {
-
-                        // --- BAGIAN DETAIL LAPORAN ---
-
-                        // Placeholder foto bukti
+                        // Image
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
-                                .clip(RoundedCornerShape(16.dp))
+                                .height(180.dp)
+                                .clip(RoundedCornerShape(12.dp))
                                 .background(Color(0xFFE0E0E0))
                         ) {
                             Text(
@@ -147,13 +138,13 @@ fun StaffReportDetailView(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Tags lokasi + upvote
+                        // Tags centered
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 listOf(
                                     currentReport.location,
                                     currentReport.floor,
@@ -164,7 +155,7 @@ fun StaffReportDetailView(
                                             modifier = Modifier
                                                 .clip(RoundedCornerShape(8.dp))
                                                 .background(Color(0xFFFF6F00))
-                                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                                                .padding(horizontal = 16.dp, vertical = 8.dp)
                                         ) {
                                             Text(
                                                 text = tag,
@@ -176,198 +167,167 @@ fun StaffReportDetailView(
                                     }
                                 }
                             }
-
-                            Row(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFFF9800))
-                                    .padding(horizontal = 14.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    text = currentReport.upvoteCount.toString(),
-                                    color = Color.White,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.ArrowUpward,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Judul laporan
+                        // Title
                         Text(
                             text = currentReport.title,
-                            fontSize = 22.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
-                            color = Color.Black
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        // Deskripsi laporan
-                        Text(
-                            text = currentReport.description,
-                            fontSize = 14.sp,
-                            color = Color.DarkGray,
-                            textAlign = TextAlign.Justify,
+                            color = Color.Black,
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 16.dp),
-                            color = Color.LightGray
-                        )
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                        // Status saat ini
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                text = "Status Saat Ini",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp,
-                                color = Color.Black
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            val (statusBg, statusLabel) = when (currentReport.status.uppercase()) {
-                                "IN_PROGRESS" -> Color(0xFF1565C0) to "DIPROSES"
-                                "DONE"        -> Color(0xFF2E7D32) to "SELESAI"
-                                "REJECTED"    -> Color(0xFF1A1A1A) to "DITOLAK"
-                                else          -> Color(0xFF757575) to "MENUNGGU"
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(statusBg)
-                                    .padding(horizontal = 14.dp, vertical = 6.dp)
-                            ) {
-                                Text(
-                                    text = statusLabel,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp
-                                )
-                            }
-                        }
+                        // User placeholder
+                        Text(
+                            text = "User012314321", // Placeholder matching the image
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Tindak lanjut (note) yang sudah ada
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                text = "Tindak Lanjut",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp,
-                                color = Color.Black
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFEEEEEE))
-                                    .padding(14.dp)
-                            ) {
-                                Text(
-                                    text = currentReport.note
-                                        ?: "Belum ada respon atau tindak lanjut dari staff admin kampus.",
-                                    color = if (currentReport.note != null) Color.Black else Color.Gray,
-                                    fontSize = 13.sp,
-                                    lineHeight = 18.sp
-                                )
-                            }
-                        }
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 20.dp),
-                            color = Color(0xFFE0E0E0)
+                        // Description
+                        Text(
+                            text = currentReport.description,
+                            fontSize = 14.sp,
+                            color = Color(0xFF333333),
+                            textAlign = TextAlign.Justify,
+                            modifier = Modifier.fillMaxWidth(),
+                            lineHeight = 20.sp
                         )
 
-                        // --- BAGIAN VALIDASI LAPORAN (khusus staff) ---
+                        Spacer(modifier = Modifier.height(16.dp))
+                        HorizontalDivider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color.White)
-                                .padding(20.dp)
+                        // Form Elements
+                        Text(
+                            text = "Status",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Dropdown
+                        var expanded by remember { mutableStateOf(false) }
+                        
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = "Validasi Laporan",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF2C3E50)
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            // Dropdown pilih status
-                            CustomDropdownMenu(
-                                label = "Ubah Status",
-                                options = statusOptions,
-                                selectedOption = viewModel.selectedStatus,
-                                onOptionSelected = { viewModel.changeSelectedStatus(it) }
-                            )
-
-                            // Field catatan / note
-                            CustomOutlinedTextField(
-                                value = viewModel.noteInput,
-                                onValueChange = { viewModel.changeNoteInput(it) },
-                                label = "Catatan Tindak Lanjut (opsional)",
-                                placeholder = "Tulis catatan untuk pelapor...",
-                                isMultiline = true
-                            )
-
-                            // Tampilkan error validasi jika ada
-                            if (errorMessage != null) {
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = errorMessage!!,
-                                    color = Color(0xFFD32F2F),
-                                    fontSize = 13.sp
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            // Tombol submit validasi
-                            Button(
-                                onClick = { viewModel.validateReport(reportId) },
+                            OutlinedTextField(
+                                value = viewModel.selectedStatus,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(52.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                enabled = !isLoading,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFFFF9800),
-                                    disabledContainerColor = Color(0xFFFFCC80)
+                                    .menuAnchor(),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    unfocusedContainerColor = Color(0xFFEAEAEA),
+                                    focusedContainerColor = Color(0xFFEAEAEA),
+                                    unfocusedBorderColor = Color.Transparent,
+                                    focusedBorderColor = Color.Transparent,
+                                    unfocusedTextColor = Color.Black,
+                                    focusedTextColor = Color.Black
                                 )
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
+                                modifier = Modifier.background(Color.White)
                             ) {
-                                if (isLoading) {
-                                    CircularProgressIndicator(
-                                        color = Color.White,
-                                        modifier = Modifier.size(22.dp),
-                                        strokeWidth = 2.dp
-                                    )
-                                } else {
-                                    Text(
-                                        text = "Simpan Validasi",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
+                                statusOptions.forEach { option ->
+                                    DropdownMenuItem(
+                                        text = { Text(option) },
+                                        onClick = {
+                                            viewModel.changeSelectedStatus(option)
+                                            expanded = false
+                                        }
                                     )
                                 }
                             }
                         }
 
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = "Tindak Lanjut",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Text Field
+                        OutlinedTextField(
+                            value = viewModel.noteInput,
+                            onValueChange = { viewModel.changeNoteInput(it) },
+                            placeholder = { Text("Tambahkan Pesan |", color = Color.Gray) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedContainerColor = Color(0xFFEAEAEA),
+                                focusedContainerColor = Color(0xFFEAEAEA),
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedTextColor = Color.Black,
+                                focusedTextColor = Color.Black
+                            )
+                        )
+
+                        if (errorMessage != null) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = errorMessage!!,
+                                color = Color(0xFFD32F2F),
+                                fontSize = 13.sp
+                            )
+                        }
+
                         Spacer(modifier = Modifier.height(24.dp))
+
+                        // Button
+                        Button(
+                            onClick = { viewModel.validateReport(reportId) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            enabled = !isLoading,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFFF7A00),
+                                disabledContainerColor = Color(0xFFFFCC80)
+                            )
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    color = Color.White,
+                                    modifier = Modifier.size(22.dp),
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Text(
+                                    text = "Validasi Laporan",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
                     }
                 }
             }
