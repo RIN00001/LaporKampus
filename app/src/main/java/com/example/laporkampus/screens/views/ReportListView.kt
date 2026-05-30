@@ -24,7 +24,7 @@ import com.example.laporkampus.screens.viewmodels.ReportUserViewModel
 import com.example.laporkampus.screens.views.components.ReportCard
 
 @Composable
-fun ReportListScreen(
+fun ReportListView(
     user: UserModel?, // Tambahkan parameter user di sini
     onReportClick: (Int) -> Unit,
     onNavigateBack: () -> Unit,

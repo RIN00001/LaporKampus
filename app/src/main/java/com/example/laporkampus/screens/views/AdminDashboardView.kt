@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 import com.example.laporkampus.datas.models.UserModel // IMPORTED YOUR MODEL
 
 @Composable
-fun AdminDashboardScreen(
+fun AdminDashboardView(
     user: UserModel, // ACCEPT THE USER MODEL DIRECTLY
     onLogout: () -> Unit
 ) {

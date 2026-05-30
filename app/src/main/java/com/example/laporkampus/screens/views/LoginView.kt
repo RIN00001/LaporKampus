@@ -107,7 +107,7 @@ fun LoginView(
                         authenticationViewModel.clearErrorMessage()
                         showError = false
                     },
-                    placeholder = { Text("Username", color = Color.Gray) },
+                    placeholder = { Text("Email ", color = Color.Gray) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),

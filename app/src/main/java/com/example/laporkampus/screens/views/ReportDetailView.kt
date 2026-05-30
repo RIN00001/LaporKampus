@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.laporkampus.screens.viewmodels.ReportUserViewModel
 
 @Composable
-fun ReportDetailScreen(
+fun ReportDetailView(
     reportId: Int,
     onNavigateBack: () -> Unit,
     viewModel: ReportUserViewModel = viewModel(factory = ReportUserViewModel.Factory),

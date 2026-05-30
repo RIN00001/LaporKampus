@@ -20,10 +20,10 @@ import com.example.laporkampus.screens.views.DashboardStaffView
 import com.example.laporkampus.screens.views.LoginView
 import com.example.laporkampus.screens.views.MakeReportView
 import com.example.laporkampus.screens.views.RegisterView
-import com.example.laporkampus.screens.views.ReportDetailScreen
-import com.example.laporkampus.screens.views.ReportListScreen
+import com.example.laporkampus.screens.views.ReportDetailView
+import com.example.laporkampus.screens.views.ReportListView
 import com.example.laporkampus.screens.views.StaffReportDetailView
-import com.example.laporkampus.screens.views.UserDashboardScreen
+import com.example.laporkampus.screens.views.UserDashboardView
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
@@ -72,7 +72,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         ) {
             composable(route = PagesEnum.UserDashboard.name) {
                 if (userData != null) {
-                    UserDashboardScreen(
+                    UserDashboardView(
                         user = userData,
                         onNavigateToMyReports = {
                             navController.navigate(PagesEnum.ReportList.name)
@@ -99,7 +99,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 // FIX: Mengambil userData dari status login aktif untuk dikirim ke List Screen
                 val userData = (status as? AuthenticationUiStatus.Success)?.userData?.user
 
-                ReportListScreen(
+                ReportListView(
                     user = userData, // Teruskan ke parameter screen
                     viewModel = reportViewModel,
                     onReportClick = { reportId ->
@@ -119,7 +119,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 val reportId = backStackEntry.arguments?.getInt("reportId") ?: 0
                 val reportViewModel: ReportUserViewModel = viewModel(factory = ReportUserViewModel.Factory)
 
-                ReportDetailScreen(
+                ReportDetailView(
                     reportId = reportId,
                     viewModel = reportViewModel,
                     onNavigateBack = {

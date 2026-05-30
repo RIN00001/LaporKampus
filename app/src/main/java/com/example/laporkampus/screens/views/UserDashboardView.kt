@@ -28,7 +28,7 @@ import com.example.laporkampus.screens.viewmodels.ReportUserViewModel
 import com.example.laporkampus.screens.views.components.ReportCard
 
 @Composable
-fun UserDashboardScreen(
+fun UserDashboardView(
     user: UserModel?,
     onLogout: () -> Unit,
     onNavigateToMyReports: () -> Unit,
