@@ -1,13 +1,22 @@
 package com.example.laporkampus.datas.repositories
 
 import com.example.laporkampus.datas.models.GeneralResponseModel
-import com.example.laporkampus.datas.models.reports.CreateReportRequest
 import com.example.laporkampus.datas.models.reports.ReportResponse
 import com.example.laporkampus.datas.services.ReportUserService
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 
 interface ReportUserRepositoryInterface {
-    fun createReport(request: CreateReportRequest): Call<GeneralResponseModel>
+    fun createReport(
+        title: RequestBody,
+        description: RequestBody,
+        location: RequestBody,
+        floor: RequestBody,
+        room: RequestBody,
+        division: RequestBody,
+        image: MultipartBody.Part?
+    ): Call<GeneralResponseModel>
     fun getAllReportsUser(): Call<List<ReportResponse>>
     fun getReportDetailUser(id: Int): Call<ReportResponse>
     fun cancelReportUser(id: Int): Call<GeneralResponseModel>
@@ -15,9 +24,19 @@ interface ReportUserRepositoryInterface {
 
 class ReportUserRepository(private val reportUserService: ReportUserService) : ReportUserRepositoryInterface {
 
-    // To send a new report from a user to the server
-    override fun createReport(request: CreateReportRequest): Call<GeneralResponseModel> {
-        return reportUserService.createReport(request)
+    // To send a new report from a user to the server using Multipart
+    override fun createReport(
+        title: RequestBody,
+        description: RequestBody,
+        location: RequestBody,
+        floor: RequestBody,
+        room: RequestBody,
+        division: RequestBody,
+        image: MultipartBody.Part?
+    ): Call<GeneralResponseModel> {
+        return reportUserService.createReport(
+            title, description, location, floor, room, division, image
+        )
     }
 
     // To fetch all reports created by the logged-in user

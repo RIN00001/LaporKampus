@@ -71,4 +71,5 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("com.auth0.android:jwtdecode:2.0.2")
     implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

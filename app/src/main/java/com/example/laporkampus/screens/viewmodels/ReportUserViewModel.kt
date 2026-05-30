@@ -1,5 +1,6 @@
 package com.example.laporkampus.screens.viewmodels
 
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,10 +12,14 @@ import com.example.laporkampus.LaporKampusApplication
 import com.example.laporkampus.datas.models.GeneralResponseModel
 import com.example.laporkampus.datas.models.reports.ReportResponse
 import com.example.laporkampus.datas.repositories.ReportUserRepository
-import com.example.laporkampus.datas.models.reports.CreateReportRequest
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class ReportUserViewModel(private val repository: ReportUserRepository) : ViewModel() {
 
@@ -104,7 +109,7 @@ class ReportUserViewModel(private val repository: ReportUserRepository) : ViewMo
         })
     }
 
-    // === 4. FUNGSI BUAT LAPORAN BARU ===
+    // === 4. FUNGSI BUAT LAPORAN BARU DENGAN MULTIPART ===
     fun createReport(
         title: String,
         description: String,
@@ -112,24 +117,36 @@ class ReportUserViewModel(private val repository: ReportUserRepository) : ViewMo
         floor: String,
         room: String,
         division: String,
-        imageUrl: String? = null
+        imageFile: File? = null
     ) {
         _isLoading.value = true
         _errorMessage.value = null
         _actionSuccessMessage.value = null
 
-        // Mengurutkan parameter sesuai constructor dari model bawaan repository
-        val request = CreateReportRequest(
-            title,
-            description,
-            location,
-            floor,
-            room,
-            division,
-            imageUrl
+        // Convert strings to RequestBody
+        val titleBody = title.toRequestBody("text/plain".toMediaTypeOrNull())
+        val descriptionBody = description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val locationBody = location.toRequestBody("text/plain".toMediaTypeOrNull())
+        val floorBody = floor.toRequestBody("text/plain".toMediaTypeOrNull())
+        val roomBody = room.toRequestBody("text/plain".toMediaTypeOrNull())
+        val divisionBody = division.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        // Convert File to MultipartBody.Part if it exists
+        var imagePart: MultipartBody.Part? = null
+        if (imageFile != null) {
+            // Dynamically resolve the correct MIME Type based on file extension
+            val extension = imageFile.extension
+            val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: "image/jpeg"
+
+            val requestFile = imageFile.asRequestBody(mimeType.toMediaTypeOrNull())
+            // "imageReport" must match the name in your backend uploadMiddleware.single("imageReport")
+            imagePart = MultipartBody.Part.createFormData("imageReport", imageFile.name, requestFile)
+        }
+
+        val call = repository.createReport(
+            titleBody, descriptionBody, locationBody, floorBody, roomBody, divisionBody, imagePart
         )
 
-        val call = repository.createReport(request)
         call.enqueue(object : Callback<GeneralResponseModel> {
             override fun onResponse(call: Call<GeneralResponseModel>, response: Response<GeneralResponseModel>) {
                 _isLoading.value = false

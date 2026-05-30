@@ -11,5 +11,6 @@ data class ReportResponse (
     @SerializedName("floorReport") val floor: String,
     @SerializedName("roomReport") val room: String,
     @SerializedName("upvoteCountReport") val upvoteCount: Int,
-    @SerializedName("noteReport") val note: String?
+    @SerializedName("noteReport") val note: String?,
+    @SerializedName("imageUrlReport") val imageUrl: String? = null
 )

@@ -19,11 +19,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.laporkampus.screens.viewmodels.ReportUserViewModel
 
 @Composable
@@ -72,14 +76,45 @@ fun ReportDetailView(
                         .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFFE0E0E0))
-                    ) {
-                        Text(text = "📸 Foto Bukti Kendala", modifier = Modifier.align(Alignment.Center), color = Color.Gray)
+                    val context = LocalContext.current
+                    val backendBaseUrl = "http://10.0.2.2:3000"
+
+                    // Safe URL formatting to prevent broken image paths
+                    val imageUrl = currentReport.imageUrl
+                    val fullImageUrl = if (!imageUrl.isNullOrEmpty()) {
+                        if (imageUrl.startsWith("http")) imageUrl else "$backendBaseUrl/${imageUrl.removePrefix("/")}"
+                    } else null
+
+                    // Load Image using Coil AsyncImage from Backend
+                    if (fullImageUrl != null) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(fullImageUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Bukti Kendala",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color(0xFFE0E0E0))
+                        )
+                    } else {
+                        // Fallback view when no image is uploaded
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(Color(0xFFE0E0E0))
+                        ) {
+                            Text(
+                                text = "📸 Tidak ada gambar",
+                                modifier = Modifier.align(Alignment.Center),
+                                color = Color.Gray
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -93,7 +128,6 @@ fun ReportDetailView(
                         listOf(currentReport.location, currentReport.floor, currentReport.room)
                             .filter { it.isNotEmpty() }
                             .forEach { tag ->
-
                                 Box(
                                     modifier = Modifier
                                         .shadow(
@@ -118,7 +152,6 @@ fun ReportDetailView(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Dihapus Elvis Operatornya agar tidak kuning
                     Text(
                         text = currentReport.title,
                         fontSize = 22.sp,
@@ -128,7 +161,6 @@ fun ReportDetailView(
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
-
 
                     Text(
                         text = "ID Laporan: ${currentReport.id}",
@@ -206,7 +238,6 @@ fun ReportDetailView(
                                 .background(Color(0xFFE1E1E1))
                                 .padding(14.dp)
                         ) {
-                            // Cuma Note yang perlu Elvis karena di data class menggunakan String?
                             Text(
                                 text = currentReport.note ?: "Belum ada respon atau tindak lanjut dari staff admin kampus.",
                                 color = if (currentReport.note != null) Color.Black else Color.Gray,
